@@ -18,3 +18,4 @@ find_package(Vulkan REQUIRED)
 
 add_subdirectory(ThirdParty)
 add_subdirectory(01.BaseCode)
+add_subdirectory(02.Instance)
