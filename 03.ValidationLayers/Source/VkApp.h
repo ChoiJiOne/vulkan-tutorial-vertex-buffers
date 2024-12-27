@@ -20,8 +20,20 @@ private:
 	void cleanup();
 
 private:
-	bool checkValidationLayerSupport();
 	void createInstance();
+	void setupDebugMessenger();
+
+private:
+	bool checkValidationLayerSupport();
+	std::vector<const char*> getRequiredExtensions();
+	void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
+
+	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
+		VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+		VkDebugUtilsMessageTypeFlagsEXT messageType,
+		const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+		void* pUserData
+	);
 
 private:
 	/** GLFW */
@@ -29,4 +41,5 @@ private:
 
 	/** Vulkan */
 	VkInstance instance;
+	VkDebugUtilsMessengerEXT debugMessenger;
 };
