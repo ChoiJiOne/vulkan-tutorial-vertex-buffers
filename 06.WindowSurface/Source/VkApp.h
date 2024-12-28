@@ -3,19 +3,21 @@
 #include <vulkan/vulkan.h>
 #include <glfw/glfw3.h>
 
-#include <iostream>
-#include <stdexcept>
 #include <cstdlib>
-#include <vector>
+#include <iostream>
 #include <optional>
+#include <stdexcept>
+#include <set>
+#include <vector>
 
 struct QueueFamilyIndices
 {
 	std::optional<uint32_t> graphicsFamily;
+	std::optional<uint32_t> presentFamily;
 
 	bool isComplete()
 	{
-		return graphicsFamily.has_value();
+		return graphicsFamily.has_value() && presentFamily.has_value();
 	}
 };
 
@@ -33,6 +35,7 @@ private:
 private:
 	void createInstance();
 	void setupDebugMessenger();
+	void createSurface();
 	void pickPhysicalDevice();
 	void createLogicalDevice();
 
@@ -57,7 +60,9 @@ private:
 	/** Vulkan */
 	VkInstance instance;
 	VkDebugUtilsMessengerEXT debugMessenger;
+	VkSurfaceKHR surface;
 	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 	VkDevice device;
 	VkQueue graphicsQueue;
+	VkQueue presentQueue;
 };
