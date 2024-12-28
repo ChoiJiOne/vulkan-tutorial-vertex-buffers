@@ -7,6 +7,17 @@
 #include <stdexcept>
 #include <cstdlib>
 #include <vector>
+#include <optional>
+
+struct QueueFamilyIndices
+{
+	std::optional<uint32_t> graphicsFamily;
+
+	bool isComplete()
+	{
+		return graphicsFamily.has_value();
+	}
+};
 
 class VkApp
 {
@@ -22,11 +33,14 @@ private:
 private:
 	void createInstance();
 	void setupDebugMessenger();
+	void pickPhysicalDevice();
 
 private:
 	bool checkValidationLayerSupport();
 	std::vector<const char*> getRequiredExtensions();
 	void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
+	bool isDeviceSuitable(VkPhysicalDevice device);
+	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 		VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
@@ -42,4 +56,5 @@ private:
 	/** Vulkan */
 	VkInstance instance;
 	VkDebugUtilsMessengerEXT debugMessenger;
+	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 };
