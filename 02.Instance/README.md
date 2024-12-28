@@ -6,7 +6,7 @@
 
 먼저 `createInstance` 함수를 추가하고, `initVulkan` 함수에서 이를 호출하도록 하세요.
 
-```
+```C++
 void initVulkan() {
     createInstance();
 }
@@ -14,14 +14,14 @@ void initVulkan() {
 
 또한, 인스턴스 핸들을 저장할 데이터 멤버를 추가하세요:
 
-```
+```C++
 private:
     VkInstance instance;
 ```
 
 이제 인스턴스를 생성하기 위해, 먼저 애플리케이션에 대한 정보를 담은 구조체를 채워야 합니다. 이 데이터는 기술적으로 선택 사항이지만, 드라이버가 특정 애플리케이션을 최적화하는 데 유용한 정보를 제공할 수 있습니다(예: 특정 특수 동작을 가진 잘 알려진 그래픽 엔진을 사용할 경우). 이 구조체는 `VkApplicationInfo`라고 합니다.
 
-```
+```C++
 void createInstance() {
     VkApplicationInfo appInfo{};
     appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -37,7 +37,7 @@ void createInstance() {
 
 Vulkan에서는 많은 정보가 함수 매개변수 대신 구조체를 통해 전달되며, 인스턴스를 생성하기 위해 충분한 정보를 제공하려면 또 하나의 구조체를 채워야 합니다. 이 구조체는 선택 사항이 아니며, Vulkan 드라이버에 우리가 사용하려는 전역 확장과 검증 레이어를 알려줍니다. 여기서 전역(global)은 특정 디바이스가 아니라 전체 프로그램에 적용된다는 의미이며, 이는 다음 몇 개의 장에서 명확해질 것입니다.
 
-```
+```C++
 VkInstanceCreateInfo createInfo{};
 createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 createInfo.pApplicationInfo = &appInfo;
@@ -45,7 +45,7 @@ createInfo.pApplicationInfo = &appInfo;
 
 첫 번째 두 매개변수는 간단합니다. 다음 두 레이어는 원하는 전역 확장을 지정합니다. 개요 장에서 언급했듯이, Vulkan은 플랫폼에 독립적인 API이기 때문에 창 시스템과 인터페이스를 하기 위해 확장이 필요합니다. GLFW는 이를 위해 필요한 확장 목록을 반환하는 유용한 내장 함수를 제공하며, 우리는 이를 구조체에 전달할 수 있습니다.
 
-```
+```C++
 uint32_t glfwExtensionCount = 0;
 const char** glfwExtensions;
 
@@ -57,13 +57,13 @@ createInfo.ppEnabledExtensionNames = glfwExtensions;
 
 구조체의 마지막 두 멤버는 활성화할 전역 검증 레이어를 결정합니다. 이 부분은 다음 장에서 더 자세히 다룰 예정이므로, 지금은 비워 두셔도 됩니다.
 
-```
+```C++
 createInfo.enabledLayerCount = 0;
 ```
 
 이제 Vulkan이 인스턴스를 생성하는 데 필요한 모든 정보를 지정했으며, 드디어 `vkCreateInstance` 호출을 할 수 있습니다.
 
-```
+```C++
 VkResult result = vkCreateInstance(&createInfo, nullptr, &instance);
 ```
 
@@ -85,7 +85,7 @@ Vulkan에서 객체 생성 함수 매개변수의 일반적인 패턴은 다음�
 
 일반적으로 코드는 다음과 같이 작성될 수 있습니다:
 
-```
+```C++
 ...
 
 std::vector<const char*> requiredExtensions;
@@ -114,26 +114,26 @@ if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
 
 확장 세부 정보를 담을 배열을 할당하려면 먼저 확장의 수를 알아야 합니다. 후자의 매개변수를 비워 두면 확장 수만 요청할 수 있습니다:
 
-```
+```C++
 uint32_t extensionCount = 0;
 vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
 ```
 
 이제 확장 세부 정보를 담을 배열을 할당합니다 (여기서 `<vector>` 헤더를 포함):
 
-```
+```C++
 std::vector<VkExtensionProperties> extensions(extensionCount);
 ```
 
 마침내 확장 세부 정보를 쿼리할 수 있습니다:
 
-```
+```C++
 vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
 ```
 
 각 `VkExtensionProperties` 구조체는 확장의 이름과 기타 정보를 포함합니다.
 
-```
+```C++
 std::cout << "available extensions:\n";
 
 for (const auto& extension : extensions) {
@@ -147,7 +147,7 @@ for (const auto& extension : extensions) {
 
 `VkInstance`는 프로그램이 종료되기 직전에만 파괴되어야 합니다. `vkDestroyInstance` 함수를 사용하여 정리(cleanup) 시에 파괴할 수 있습니다:
 
-```
+```C++
 void cleanup() {
     vkDestroyInstance(instance, nullptr);
 

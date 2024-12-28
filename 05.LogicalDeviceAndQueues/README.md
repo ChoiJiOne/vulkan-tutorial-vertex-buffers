@@ -6,13 +6,13 @@
 
 먼저, 논리 장치 핸들을 저장할 새로운 클래스 멤버를 추가합니다.
 
-```
+```C++
 VkDevice device;
 ```
 
 그 다음, `initVulkan`에서 호출될 `createLogicalDevice` 함수를 추가합니다.
 
-```
+```C++
 void initVulkan() {
     createInstance();
     setupDebugMessenger();
@@ -29,7 +29,7 @@ void createLogicalDevice() {
 
 논리 장치를 생성하는 과정은 다시 한 번 여러 세부 사항을 구조체에 지정하는 과정입니다. 그 중 첫 번째는 `VkDeviceQueueCreateInfo` 구조체입니다. 이 구조체는 단일 큐 패밀리에 대해 원하는 큐의 수를 설명합니다. 현재 우리는 그래픽 기능을 가진 큐에만 관심이 있습니다.
 
-```
+```C++
 QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
 
 VkDeviceQueueCreateInfo queueCreateInfo{};
@@ -42,7 +42,7 @@ queueCreateInfo.queueCount = 1;
 
 Vulkan은 큐에 우선순위를 지정하여 명령 버퍼 실행의 스케줄링에 영향을 미칠 수 있게 합니다. 우선순위는 `0.0`과 `1.0` 사이의 부동 소수점 숫자를 사용하여 지정합니다. 이는 큐가 하나뿐일 때도 필수입니다.
 
-```
+```C++
 float queuePriority = 1.0f;
 queueCreateInfo.pQueuePriorities = &queuePriority;
 ```
@@ -51,7 +51,7 @@ queueCreateInfo.pQueuePriorities = &queuePriority;
 
 다음으로 지정할 정보는 우리가 사용할 장치 기능의 집합입니다. 이 기능들은 이전 장에서 `vkGetPhysicalDeviceFeatures`로 지원 여부를 쿼리했던 기능들로, 예를 들어 기하 셰이더 등이 있습니다. 현재는 특별한 기능이 필요하지 않으므로, 이를 간단히 정의하고 모든 항목을 `VK_FALSE`로 설정할 수 있습니다. Vulkan으로 더 흥미로운 작업을 시작할 때 이 구조체를 다시 살펴볼 것입니다.
 
-```
+```C++
 VkPhysicalDeviceFeatures deviceFeatures{};
 ```
 
@@ -59,14 +59,14 @@ VkPhysicalDeviceFeatures deviceFeatures{};
 
 이전 두 구조체가 준비되었으므로, 이제 주요 `VkDeviceCreateInfo` 구조체를 채울 수 있습니다.
 
-```
+```C++
 VkDeviceCreateInfo createInfo{};
 createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 ```
 
 먼저 큐 생성 정보와 장치 기능 구조체에 대한 포인터를 추가합니다:
 
-```
+```C++
 createInfo.pQueueCreateInfos = &queueCreateInfo;
 createInfo.queueCreateInfoCount = 1;
 
@@ -79,7 +79,7 @@ createInfo.pEnabledFeatures = &deviceFeatures;
 
 이전 Vulkan 구현은 인스턴스와 장치 특화 검증 레이어를 구분했지만, 이제는 더 이상 그렇게 하지 않습니다. 즉, `VkDeviceCreateInfo`의 `enabledLayerCount`와 `ppEnabledLayerNames` 필드는 최신 구현에서는 무시됩니다. 그럼에도 불구하고, 구버전 구현과 호환되도록 이를 설정하는 것이 여전히 좋은 방법입니다.
 
-```
+```C++
 createInfo.enabledExtensionCount = 0;
 
 if (enableValidationLayers) {
@@ -94,7 +94,7 @@ if (enableValidationLayers) {
 
 그렇다면 이제 적절한 이름의 `vkCreateDevice` 함수를 호출하여 논리 장치를 인스턴스화할 준비가 되었습니다.
 
-```
+```C++
 if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) {
     throw std::runtime_error("failed to create logical device!");
 }
@@ -104,7 +104,7 @@ if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS)
 
 장치는 `vkDestroyDevice` 함수로 정리 시 파괴되어야 합니다.
 
-```
+```C++
 void cleanup() {
     vkDestroyDevice(device, nullptr);
     ...
@@ -117,7 +117,7 @@ void cleanup() {
 
 큐는 논리 장치와 함께 자동으로 생성되지만, 아직 이를 인터페이스할 핸들은 없습니다. 먼저 그래픽 큐에 대한 핸들을 저장할 클래스 멤버를 추가합니다:
 
-```
+```C++
 VkQueue graphicsQueue;
 ```
 
@@ -125,7 +125,7 @@ VkQueue graphicsQueue;
 
 우리는 `vkGetDeviceQueue` 함수를 사용하여 각 큐 패밀리의 큐 핸들을 가져올 수 있습니다. 파라미터는 논리 장치, 큐 패밀리, 큐 인덱스, 그리고 큐 핸들을 저장할 변수에 대한 포인터입니다. 여기서는 이 패밀리에서 하나의 큐만 생성하므로 인덱스 0을 사용합니다.
 
-```
+```C++
 vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
 ```
 

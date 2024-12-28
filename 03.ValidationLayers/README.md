@@ -14,7 +14,7 @@ Vulkan API는 최소한의 드라이버 오버헤드를 목표로 설계되었�
 
 다음은 진단 검증 레이어에서 함수 구현이 어떻게 보일 수 있는지에 대한 예시입니다:
 
-```
+```C++
 VkResult vkCreateInstance(
     const VkInstanceCreateInfo* pCreateInfo,
     const VkAllocationCallbacks* pAllocator,
@@ -45,7 +45,7 @@ Vulkan에는 기본적으로 검증 레이어가 포함되어 있지 않지만, 
 
 먼저, 프로그램에 두 개의 구성 변수를 추가하여 활성화할 레이어와 활성화 여부를 지정해 보겠습니다. 여기서는 프로그램이 디버그 모드에서 컴파일되고 있는지 여부에 따라 값을 설정하도록 하겠습니다. NDEBUG 매크로는 C++ 표준의 일부로, "디버그 아님"을 의미합니다.
 
-```
+```C++
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
 
@@ -62,7 +62,7 @@ const std::vector<const char*> validationLayers = {
 
 새로운 함수 `checkValidationLayerSupport`를 추가하여 요청한 모든 레이어가 사용 가능한지 확인하겠습니다. 먼저 `vkEnumerateInstanceLayerProperties` 함수를 사용하여 모든 사용 가능한 레이어를 나열합니다. 이 함수의 사용법은 `vkEnumerateInstanceExtensionProperties`와 동일하며, 이는 인스턴스 생성 챕터에서 다루었습니다.
 
-```
+```C++
 bool checkValidationLayerSupport() {
     uint32_t layerCount;
     vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
@@ -76,7 +76,7 @@ bool checkValidationLayerSupport() {
 
 다음으로, `validationLayers`에 있는 모든 레이어가 `availableLayers` 목록에 존재하는지 확인합니다. 이때 `strcmp`를 사용하기 위해 `<cstring>` 헤더를 포함해야 할 수도 있습니다.
 
-```
+```C++
 for (const char* layerName : validationLayers) {
     bool layerFound = false;
 
@@ -97,7 +97,7 @@ return true;
 
 이제 이 함수를 `createInstance` 함수에서 사용할 수 있습니다:
 
-```
+```C++
 void createInstance() {
     if (enableValidationLayers && !checkValidationLayerSupport()) {
         throw std::runtime_error("validation layers requested, but not available!");
@@ -111,7 +111,7 @@ void createInstance() {
 
 마지막으로, `VkInstanceCreateInfo` 구조체의 초기화를 수정하여 검증 레이어가 활성화된 경우 해당 레이어 이름을 포함시키도록 설정합니다:
 
-```
+```C++
 if (enableValidationLayers) {
     createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
     createInfo.ppEnabledLayerNames = validationLayers.data();
@@ -130,7 +130,7 @@ if (enableValidationLayers) {
 
 먼저, `getRequiredExtensions` 함수를 작성하여 검증 레이어가 활성화되었는지 여부에 따라 필요한 확장 목록을 반환하겠습니다:
 
-```
+```C++
 std::vector<const char*> getRequiredExtensions() {
     uint32_t glfwExtensionCount = 0;
     const char** glfwExtensions;
@@ -150,7 +150,7 @@ GLFW에서 지정한 확장은 항상 필요하며, 디버그 메시저 확장�
 
 이제 `createInstance` 함수에서 이 getRequiredExtensions 함수를 사용할 수 있습니다:
 
-```
+```C++
 auto extensions = getRequiredExtensions();
 createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
 createInfo.ppEnabledExtensionNames = extensions.data();
@@ -160,7 +160,7 @@ createInfo.ppEnabledExtensionNames = extensions.data();
 
 이제 디버그 콜백 함수가 어떻게 생겼는지 살펴보겠습니다. `debugCallback`이라는 새로운 정적 멤버 함수를 추가하고, 이 함수는 `PFN_vkDebugUtilsMessengerCallbackEXT` 프로토타입을 가집니다. `VKAPI_ATTR`와 `VKAPI_CALL`은 이 함수가 Vulkan이 호출할 수 있는 올바른 서명을 갖도록 보장합니다.
 
-```
+```C++
 static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
     VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
     VkDebugUtilsMessageTypeFlagsEXT messageType,
@@ -206,13 +206,13 @@ if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
 
 이제 남은 작업은 Vulkan에 콜백 함수에 대해 알리는 것입니다. 다소 놀랍게도, Vulkan에서 디버그 콜백도 명시적으로 생성하고 소멸시켜야 하는 핸들로 관리됩니다. 이러한 콜백은 디버그 메시저의 일부이며, 원하는 만큼 여러 개를 가질 수 있습니다. 이 핸들을 `instance` 바로 아래에 클래스 멤버로 추가하세요.
 
-```
+```C++
 VkDebugUtilsMessengerEXT debugMessenger;
 ```
 
 이제 `setupDebugMessenger` 함수를 추가하여 `createInstance` 직후 `initVulkan`에서 호출되도록 설정하세요.
 
-```
+```C++
 void initVulkan() {
     createInstance();
     setupDebugMessenger();
@@ -226,7 +226,7 @@ void setupDebugMessenger() {
 
 디버그 메시저와 그 콜백에 대한 세부 정보를 채우기 위해 구조체를 작성해야 합니다.
 
-```
+```C++
 VkDebugUtilsMessengerCreateInfoEXT createInfo{};
 createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
 createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
@@ -245,7 +245,7 @@ createInfo.pUserData = nullptr; // Optional
 
 이 구조체는 `vkCreateDebugUtilsMessengerEXT` 함수에 전달되어 `VkDebugUtilsMessengerEXT` 객체를 생성해야 합니다. 불행히도 이 함수는 확장 함수이기 때문에 자동으로 로드되지 않습니다. 우리는 `vkGetInstanceProcAddr`를 사용하여 직접 함수 주소를 찾아야 합니다. 이를 처리하는 자체 프록시 함수를 클래스 정의 바로 위에 추가했습니다.
 
-```
+```C++
 VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger) {
     auto func = (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
     if (func != nullptr) {
@@ -258,7 +258,7 @@ VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMes
 
 `vkGetInstanceProcAddr` 함수는 함수가 로드되지 않으면 `nullptr`를 반환합니다. 이제 이 함수를 호출하여 확장 객체를 생성할 수 있습니다, 만약 사용 가능하다면:
 
-```
+```C++
 if (CreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
     throw std::runtime_error("failed to set up debug messenger!");
 }
@@ -270,7 +270,7 @@ if (CreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger
 
 `CreateDebugUtilsMessengerEXT` 아래에 또 다른 프록시 함수를 추가하세요.
 
-```
+```C++
 void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator) {
     auto func = (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
     if (func != nullptr) {
@@ -281,7 +281,7 @@ void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT
 
 이 함수가 static 클래스 함수이거나 클래스 외부에 있는 함수인지 확인하세요. 그런 다음, 이 함수를 정리(`cleanup`) 함수에서 호출할 수 있습니다.
 
-```
+```C++
 void cleanup() {
     if (enableValidationLayers) {
         DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
@@ -301,7 +301,7 @@ void cleanup() {
 
 그러나 [확장 문서](https://github.com/KhronosGroup/Vulkan-Docs/blob/main/appendices/VK_EXT_debug_utils.adoc#examples)를 자세히 읽어보면, 이 두 함수 호출을 위한 별도의 debug utils messenger를 생성하는 방법이 있다는 것을 알 수 있습니다. 이를 위해서는 `VkInstanceCreateInfo`의 `pNext` 확장 필드에 `VkDebugUtilsMessengerCreateInfoEXT` 구조체의 포인터를 전달하면 됩니다. 먼저, messenger 생성 정보를 별도의 함수로 추출합니다:
 
-```
+```C++
 void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo) {
     createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
@@ -326,7 +326,7 @@ void setupDebugMessenger() {
 
 이제 `createInstance` 함수에서 이를 재사용할 수 있습니다:
 
-```
+```C++
 void createInstance() {
     ...
 

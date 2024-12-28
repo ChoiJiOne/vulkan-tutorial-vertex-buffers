@@ -4,7 +4,7 @@
 
 이전 장에서는 모든 적절한 설정을 통해 Vulkan 프로젝트를 생성하고 샘플 코드를 사용하여 테스트했습니다. 이번 장에서는 다음 코드를 사용하여 처음부터 시작하겠습니다:
 
-```
+```C++
 #include <vulkan/vulkan.h>
 
 #include <iostream>
@@ -67,14 +67,14 @@ Vulkan 객체는 `vkCreateXXX`와 같은 함수로 직접 생성되거나, `vkAl
 
 Vulkan은 오프스크린 렌더링을 위해 창을 생성하지 않고도 완벽히 동작하지만, 화면에 실제로 무언가를 보여주는 것이 훨씬 흥미롭습니다! 먼저, #include `<vulkan/vulkan.h>` 줄을 다음과 같이 교체하세요:
 
-```
+```C++
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 ```
 
 GLFW는 자체 정의를 포함하고 Vulkan 헤더를 자동으로 로드합니다. 이제 `initWindow` 함수를 추가하고, `run` 함수에서 다른 호출 이전에 `initWindow`를 호출하도록 설정하세요. 이 함수에서 GLFW를 초기화하고 창을 생성할 것입니다.
 
-```
+```C++
 void run() {
     initWindow();
     initVulkan();
@@ -90,19 +90,19 @@ private:
 
 `initWindow`의 첫 번째 호출은 `glfwInit()`이어야 하며, 이는 GLFW 라이브러리를 초기화합니다. GLFW는 원래 OpenGL 컨텍스트 생성을 위해 설계되었기 때문에, 다음과 같은 호출로 OpenGL 컨텍스트 생성을 비활성화해야 합니다:
 
-```
+```C++
 glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 ```
 
 창 크기 조정 처리는 특별한 주의가 필요하며, 이에 대해서는 나중에 다룰 예정입니다. 현재는 다른 창 힌트 호출로 이를 비활성화하세요:
 
-```
+```C++
 glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 ```
 
 이제 실제 창을 생성하는 것만 남았습니다. `GLFWwindow* window;`를 private 클래스 멤버로 추가하여 참조를 저장하고, 창을 다음과 같이 초기화합니다:
 
-```
+```C++
 window = glfwCreateWindow(800, 600, "Vulkan", nullptr, nullptr);
 ```
 
@@ -110,20 +110,20 @@ window = glfwCreateWindow(800, 600, "Vulkan", nullptr, nullptr);
 
 너비와 높이를 하드코딩된 숫자 대신 상수로 사용하는 것이 좋습니다. 이후 여러 번 이 값을 참조할 것이기 때문입니다. HelloTriangleApplication 클래스 정의 위에 다음 줄을 추가했습니다:
 
-```
+```C++
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
 ```
 
 그리고 창 생성 호출을 다음과 같이 교체했습니다.
 
-```
+```C++
 window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", nullptr, nullptr);
 ```
 
 이제 `initWindow` 함수는 다음과 같아야 합니다:
 
-```
+```C++
 void initWindow() {
     glfwInit();
 
@@ -136,7 +136,7 @@ void initWindow() {
 
 애플리케이션이 오류가 발생하거나 창이 닫힐 때까지 실행되도록 하려면, `mainLoop` 함수에 이벤트 루프를 추가해야 합니다.
 
-```
+```C++
 void mainLoop() {
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
@@ -148,7 +148,7 @@ void mainLoop() {
 
 창이 닫히면 리소스를 정리해야 하므로 창을 파괴하고 GLFW 자체를 종료해야 합니다. 이것이 첫 번째 `cleanup` 코드가 될 것입니다:
 
-```
+```C++
 void cleanup() {
     glfwDestroyWindow(window);
 
