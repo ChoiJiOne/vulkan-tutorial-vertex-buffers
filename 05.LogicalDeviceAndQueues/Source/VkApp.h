@@ -34,6 +34,7 @@ private:
 	void createInstance();
 	void setupDebugMessenger();
 	void pickPhysicalDevice();
+	void createLogicalDevice();
 
 private:
 	bool checkValidationLayerSupport();
@@ -57,4 +58,6 @@ private:
 	VkInstance instance;
 	VkDebugUtilsMessengerEXT debugMessenger;
 	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+	VkDevice device;
+	VkQueue graphicsQueue;
 };
