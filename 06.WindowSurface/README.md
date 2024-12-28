@@ -167,3 +167,6 @@ vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);
 ```
 
 큐 패밀리가 동일한 경우, 두 핸들이 같은 값을 가지게 될 가능성이 높습니다. 다음 장에서는 스왑 체인(swap chains)을 살펴보고, 이를 통해 이미지를 표면에 표시할 수 있는 방법을 다룰 것입니다.
+
+## Source Code
+- [C++ code](https://vulkan-tutorial.com/code/05_window_surface.cpp)
