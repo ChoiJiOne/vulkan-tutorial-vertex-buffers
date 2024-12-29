@@ -8,5 +8,5 @@ set_target_properties(
     1.2.1.WindowSurface
     1.2.2.SwapChain
     1.2.3.ImageViews
-    PROPERTIES FOLDER "1.DrawingATriangle/1.2.Presentation"
+    PROPERTIES FOLDER "1.Drawing a triangle/1.2.Presentation"
 )

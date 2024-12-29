@@ -12,5 +12,5 @@ set_target_properties(
     1.1.3.ValidationLayers 
     1.1.4.PhysicalDevicesAndQueueFamilies
     1.1.5.LogicalDeviceAndQueues
-    PROPERTIES FOLDER "1.DrawingATriangle/1.1.Setup"
+    PROPERTIES FOLDER "1.Drawing a triangle/1.1.Setup"
 )

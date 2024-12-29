@@ -18,5 +18,5 @@ find_package(Vulkan REQUIRED)
 
 add_subdirectory(ThirdParty)
 
-set(DRAWING_A_TRIANGLE "1. Drawing a triangle")
+set(DRAWING_A_TRIANGLE "1.Drawing a triangle")
 add_subdirectory(${DRAWING_A_TRIANGLE})
