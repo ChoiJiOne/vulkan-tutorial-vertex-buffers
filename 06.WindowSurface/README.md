@@ -1,4 +1,4 @@
-# Window surface
+# Presentation: Window surface
 
 Vulkan은 플랫폼에 구애받지 않는 API이기 때문에, 자체적으로 윈도우 시스템과 직접 상호작용할 수 없습니다. Vulkan과 윈도우 시스템 간 연결을 설정하여 화면에 결과를 표시하려면 WSI(Window System Integration) 확장을 사용해야 합니다. 이 장에서는 첫 번째 WSI 확장인 `VK_KHR_surface`에 대해 다룰 것입니다. 이 확장은 렌더링된 이미지를 표시할 추상적인 표면을 나타내는 `VkSurfaceKHR` 객체를 노출합니다. 프로그램에서 이 표면은 이미 GLFW를 사용해 열어 둔 창을 기반으로 합니다.
 
