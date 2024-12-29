@@ -1,4 +1,4 @@
-# Setup: Logical device and queues
+# Logical device and queues
 
 ## Introduction
 

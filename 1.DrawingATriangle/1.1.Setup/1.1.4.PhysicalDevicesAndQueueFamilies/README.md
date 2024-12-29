@@ -1,4 +1,4 @@
-# Setup: Physical devices and queue families
+# Physical devices and queue families
 
 ## Selecting a physical device
 

@@ -1,4 +1,4 @@
-# Setup: Base Code
+# Base Code
 
 ## General structure
 
