@@ -1,4 +1,4 @@
-# Instance
+# Setup: Instance
 
 ## Creating an instance
 

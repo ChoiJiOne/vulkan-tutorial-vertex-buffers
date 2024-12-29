@@ -1,4 +1,4 @@
-# Validation layers
+# Setup: Validation layers
 
 ## What are validation layers?
 
