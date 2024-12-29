@@ -49,6 +49,7 @@ private:
 	void createLogicalDevice();
 	void createSwapChain();
 	void createImageViews();
+	void createGraphicsPipeline();
 
 private:
 	bool checkValidationLayerSupport();

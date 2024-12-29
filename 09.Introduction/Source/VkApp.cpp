@@ -81,6 +81,7 @@ void VkApp::initVulkan()
 	createLogicalDevice();
 	createSwapChain();
 	createImageViews();
+	createGraphicsPipeline();
 }
 
 void VkApp::mainLoop()
@@ -366,6 +367,10 @@ void VkApp::createImageViews()
 			throw std::runtime_error("failed to create image views!");
 		}
 	}
+}
+
+void VkApp::createGraphicsPipeline()
+{
 }
 
 bool VkApp::checkValidationLayerSupport()
