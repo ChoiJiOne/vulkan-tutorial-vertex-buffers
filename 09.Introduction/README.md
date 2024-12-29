@@ -31,3 +31,25 @@ OpenGL이나 Direct3D와 같은 이전 API를 사용해본 경험이 있다면, 
 다음 챕터에서는 화면에 삼각형을 그리는 데 필요한 두 개의 프로그래머블 단계를 먼저 생성합니다: **버텍스 셰이더(Vertex Shader)**와 **프래그먼트 셰이더(Fragment Shader)**입니다. 그 후 챕터에서는 블렌딩 모드, 뷰포트, 래스터화와 같은 고정 기능 구성도 설정할 것입니다. Vulkan에서 그래픽스 파이프라인을 설정하는 마지막 부분은 입력 및 출력 프레임버퍼의 사양을 지정하는 것입니다.
 
 `createGraphicsPipeline` 함수를 작성하고, `createImageViews`가 호출된 후 `initVulkan`에서 이를 호출하도록 합니다. 우리는 이 함수에 대해 다음 챕터들에서 계속 작업할 것입니다.
+
+```C++
+void initVulkan() {
+    createInstance();
+    setupDebugMessenger();
+    createSurface();
+    pickPhysicalDevice();
+    createLogicalDevice();
+    createSwapChain();
+    createImageViews();
+    createGraphicsPipeline();
+}
+
+...
+
+void createGraphicsPipeline() {
+
+}
+```
+
+## Source Code
+- [C++ code](https://vulkan-tutorial.com/code/08_graphics_pipeline.cpp)
