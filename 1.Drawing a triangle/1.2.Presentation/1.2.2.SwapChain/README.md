@@ -410,7 +410,7 @@ void cleanup() {
 
 검증 레이어가 활성화된 상태에서 `createInfo.imageExtent = extent;` 라인을 제거해 보세요. 그러면 검증 레이어 중 하나가 즉시 실수를 잡고 유용한 메시지를 출력하는 것을 볼 수 있습니다.
 
-![image01](../Image/image01.png)
+![image01](../../../Image/image01.png)
 
 ## Retrieving the swap chain images
 
