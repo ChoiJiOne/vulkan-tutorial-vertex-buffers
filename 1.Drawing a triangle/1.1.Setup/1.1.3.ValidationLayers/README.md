@@ -361,7 +361,7 @@ void createInstance() {
 
 이제 validation layers가 작동하는지 확인하기 위해 의도적으로 실수를 만들어 봅시다. `cleanup` 함수에서 `DestroyDebugUtilsMessengerEXT` 호출을 임시로 제거하고 프로그램을 실행해 보세요. 프로그램이 종료되면 다음과 같은 메시지를 볼 수 있어야 합니다:
 
-![image00](../Image/image00.png)
+![image00](../../../Image/image00.png)
 
 > 만약 메시지가 보이지 않는다면, [설치](https://vulkan.lunarg.com/doc/view/1.2.131.1/windows/getting_started.html#user-content-verify-the-installation)를 확인해 보세요.
 
