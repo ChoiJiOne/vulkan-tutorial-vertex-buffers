@@ -4,11 +4,13 @@ add_subdirectory(1.3.1.Introduction)
 add_subdirectory(1.3.2.ShaderModules)
 add_subdirectory(1.3.3.FixedFunctions)
 add_subdirectory(1.3.4.RenderPasses)
+add_subdirectory(1.3.5.Conclusion)
 
 set_target_properties(
     1.3.1.Introduction
     1.3.2.ShaderModules
     1.3.3.FixedFunctions
     1.3.4.RenderPasses
+    1.3.5.Conclusion
     PROPERTIES FOLDER "1.Drawing a triangle/1.3.Graphics pipeline basics"
 )
