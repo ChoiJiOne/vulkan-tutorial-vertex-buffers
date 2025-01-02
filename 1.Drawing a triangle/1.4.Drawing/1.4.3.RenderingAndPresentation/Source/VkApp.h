@@ -40,6 +40,7 @@ private:
 	void initVulkan();
 	void mainLoop();
 	void cleanup();
+	void drawFrame();
 
 private:
 	void createInstance();

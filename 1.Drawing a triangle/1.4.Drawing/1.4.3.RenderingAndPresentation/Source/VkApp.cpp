@@ -94,6 +94,7 @@ void VkApp::mainLoop()
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
+		drawFrame();
 	}
 }
 
@@ -130,6 +131,10 @@ void VkApp::cleanup()
 	window = nullptr;
 
 	glfwTerminate();
+}
+
+void VkApp::drawFrame()
+{
 }
 
 void VkApp::createInstance()
