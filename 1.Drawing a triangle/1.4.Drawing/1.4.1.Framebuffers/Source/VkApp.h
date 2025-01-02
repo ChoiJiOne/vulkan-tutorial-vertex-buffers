@@ -51,6 +51,7 @@ private:
 	void createImageViews();
 	void createRenderPass();
 	void createGraphicsPipeline();
+	void createFramebuffers();
 
 private:
 	bool checkValidationLayerSupport();
@@ -80,15 +81,20 @@ private:
 	VkInstance instance;
 	VkDebugUtilsMessengerEXT debugMessenger;
 	VkSurfaceKHR surface;
+
 	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 	VkDevice device;
+
 	VkQueue graphicsQueue;
 	VkQueue presentQueue;
+
 	VkSwapchainKHR swapChain;
 	std::vector<VkImage> swapChainImages;
 	VkFormat swapChainImageFormat;
 	VkExtent2D swapChainExtent;
 	std::vector<VkImageView> swapChainImageViews;
+	std::vector<VkFramebuffer> swapChainFramebuffers;
+
 	VkRenderPass renderPass;
 	VkPipelineLayout pipelineLayout;
 	VkPipeline graphicsPipeline;
