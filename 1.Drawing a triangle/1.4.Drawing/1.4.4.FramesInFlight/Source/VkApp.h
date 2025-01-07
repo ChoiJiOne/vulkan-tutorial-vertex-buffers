@@ -23,6 +23,8 @@ struct QueueFamilyIndices
 	}
 };
 
+const int32_t MAX_FRAMES_IN_FLIGHT = 2;
+
 struct SwapChainSupportDetails
 {
 	VkSurfaceCapabilitiesKHR capabilities;
@@ -54,7 +56,7 @@ private:
 	void createGraphicsPipeline();
 	void createFramebuffers();
 	void createCommandPool();
-	void createCommandBuffer();
+	void createCommandBuffers();
 	void createSyncObjects();
 
 private:
@@ -105,9 +107,10 @@ private:
 	VkPipeline graphicsPipeline;
 
 	VkCommandPool commandPool;
-	VkCommandBuffer commandBuffer;
+	std::vector<VkCommandBuffer> commandBuffers;
 
-	VkSemaphore imageAvailableSemaphore;
-	VkSemaphore renderFinishedSeemaphore;
-	VkFence inFlightFence;
+	std::vector<VkSemaphore> imageAvailableSemaphores;
+	std::vector<VkSemaphore> renderFinishedSeemaphores;
+	std::vector<VkFence> inFlightFences;
+	uint32_t currentFrame = 0;
 };
