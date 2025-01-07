@@ -12,6 +12,8 @@
 #include <set>
 #include <vector>
 
+#include "Vertex.h"
+
 struct QueueFamilyIndices
 {
 	std::optional<uint32_t> graphicsFamily;
@@ -120,4 +122,6 @@ private:
 	uint32_t currentFrame = 0;
 
 	bool framebufferResized = false;
+
+	std::vector<Vertex> vertices;
 };
