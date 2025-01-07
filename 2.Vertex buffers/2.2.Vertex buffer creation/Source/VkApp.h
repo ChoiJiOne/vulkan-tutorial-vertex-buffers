@@ -61,6 +61,7 @@ private:
 	void createGraphicsPipeline();
 	void createFramebuffers();
 	void createCommandPool();
+	void createVertexBuffer();
 	void createCommandBuffers();
 	void createSyncObjects();
 
@@ -77,6 +78,7 @@ private:
 	VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 	VkShaderModule createShaderModule(const std::vector<char>& code);
 	void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+	uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 		VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
@@ -114,6 +116,10 @@ private:
 	VkPipeline graphicsPipeline;
 
 	VkCommandPool commandPool;
+
+	VkBuffer vertexBuffer;
+	VkDeviceMemory vertexBufferMemory;
+
 	std::vector<VkCommandBuffer> commandBuffers;
 
 	std::vector<VkSemaphore> imageAvailableSemaphores;
