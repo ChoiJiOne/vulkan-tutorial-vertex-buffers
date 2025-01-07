@@ -44,6 +44,9 @@ private:
 	void cleanup();
 	void drawFrame();
 
+	void recreateSwapChain();
+	void cleanupSwapChain();
+
 private:
 	void createInstance();
 	void setupDebugMessenger();
@@ -80,6 +83,8 @@ private:
 		void* pUserData
 	);
 
+	static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
+
 private:
 	/** GLFW */
 	GLFWwindow* window;
@@ -113,4 +118,6 @@ private:
 	std::vector<VkSemaphore> renderFinishedSeemaphores;
 	std::vector<VkFence> inFlightFences;
 	uint32_t currentFrame = 0;
+
+	bool framebufferResized = false;
 };

@@ -68,9 +68,10 @@ void VkApp::initWindow()
 	glfwInit();
 
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 	
 	window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan Tutorial", nullptr, nullptr);
+	glfwSetWindowUserPointer(window, this);
+	glfwSetFramebufferSizeCallback(window, VkApp::framebufferResizeCallback);
 }
 
 void VkApp::initVulkan()
@@ -103,6 +104,14 @@ void VkApp::mainLoop()
 
 void VkApp::cleanup()
 {
+	cleanupSwapChain();
+
+	vkDestroyPipeline(device, graphicsPipeline, nullptr);
+	vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
+
+	vkDestroyRenderPass(device, renderPass, nullptr);
+
+
 	for (std::size_t index = 0; index < MAX_FRAMES_IN_FLIGHT; ++index)
 	{
 		vkDestroySemaphore(device, imageAvailableSemaphores[index], nullptr);
@@ -112,21 +121,6 @@ void VkApp::cleanup()
 
 	vkDestroyCommandPool(device, commandPool, nullptr);
 
-	for (auto framebuffer : swapChainFramebuffers)
-	{
-		vkDestroyFramebuffer(device, framebuffer, nullptr);
-	}
-
-	vkDestroyPipeline(device, graphicsPipeline, nullptr);
-	vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
-	vkDestroyRenderPass(device, renderPass, nullptr);
-
-	for (auto imageView : swapChainImageViews)
-	{
-		vkDestroyImageView(device, imageView, nullptr);
-	}
-
-	vkDestroySwapchainKHR(device, swapChain, nullptr);
 	vkDestroyDevice(device, nullptr);
 
 	if (enableValidationLayers)
@@ -143,13 +137,58 @@ void VkApp::cleanup()
 	glfwTerminate();
 }
 
+void VkApp::recreateSwapChain()
+{
+	int width = 0;
+	int height = 0;
+	glfwGetFramebufferSize(window, &width, &height);
+	while (width == 0 || height == 0)
+	{
+		glfwGetFramebufferSize(window, &width, &height);
+		glfwWaitEvents();
+	}
+
+	vkDeviceWaitIdle(device);
+
+	cleanupSwapChain();
+
+	createSwapChain();
+	createImageViews();
+	createFramebuffers();
+}
+
+void VkApp::cleanupSwapChain()
+{
+	for (std::size_t index = 0; index < swapChainFramebuffers.size(); ++index)
+	{
+		vkDestroyFramebuffer(device, swapChainFramebuffers[index], nullptr);
+	}
+
+	for (std::size_t index = 0; index < swapChainImageViews.size(); ++index)
+	{
+		vkDestroyImageView(device, swapChainImageViews[index], nullptr);
+	}
+
+	vkDestroySwapchainKHR(device, swapChain, nullptr);
+}
+
 void VkApp::drawFrame()
 {
 	vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
-	vkResetFences(device, 1, &inFlightFences[currentFrame]);
 
 	uint32_t imageIndex = 0;
-	vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
+	VkResult result = vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
+	if (result == VK_ERROR_OUT_OF_DATE_KHR)
+	{
+		recreateSwapChain();
+		return;
+	}
+	else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
+	{
+		throw std::runtime_error("failed to acquire swap chain image!");
+	}
+
+	vkResetFences(device, 1, &inFlightFences[currentFrame]);
 
 	vkResetCommandBuffer(commandBuffers[currentFrame], 0);
 	recordCommandBuffer(commandBuffers[currentFrame], imageIndex);
@@ -185,7 +224,16 @@ void VkApp::drawFrame()
 	presentInfo.pImageIndices = &imageIndex;
 	presentInfo.pResults = nullptr;
 
-	vkQueuePresentKHR(presentQueue, &presentInfo);
+	result = vkQueuePresentKHR(presentQueue, &presentInfo);
+	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || framebufferResized)
+	{
+		framebufferResized = false;
+		recreateSwapChain();
+	}
+	else if (result != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to present swap chain image!");
+	}
 
 	currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 }
@@ -976,4 +1024,10 @@ VKAPI_ATTR VkBool32 VKAPI_CALL VkApp::debugCallback(VkDebugUtilsMessageSeverityF
 {
 	std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
 	return VK_FALSE;
+}
+
+void VkApp::framebufferResizeCallback(GLFWwindow* window, int width, int height)
+{
+	VkApp* app = reinterpret_cast<VkApp*>(glfwGetWindowUserPointer(window));
+	app->framebufferResized = true;
 }
