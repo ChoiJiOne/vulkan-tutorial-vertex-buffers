@@ -55,6 +55,7 @@ private:
 	void createFramebuffers();
 	void createCommandPool();
 	void createCommandBuffer();
+	void createSyncObjects();
 
 private:
 	bool checkValidationLayerSupport();
@@ -105,4 +106,8 @@ private:
 
 	VkCommandPool commandPool;
 	VkCommandBuffer commandBuffer;
+
+	VkSemaphore imageAvailableSemaphore;
+	VkSemaphore renderFinishedSeemaphore;
+	VkFence inFlightFence;
 };
