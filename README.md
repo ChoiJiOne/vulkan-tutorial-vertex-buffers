@@ -31,8 +31,8 @@
     - [2.3 Staging buffer](./2.Vertex%20buffers/2.3.Staging%20buffer/)
     - [2.4 Index buffer](./2.Vertex%20buffers/2.4.Index%20buffer/)
 3. Uniform buffers
-    - 3.1 Descriptor layout and buffer
-    - 3.2 Descriptor pool and sets
+    - [3.1 Descriptor layout and buffer](./3.Uniform%20buffers/3.1.Descriptor%20layout%20and%20buffer/)
+    - [3.2 Descriptor pool and sets](./3.Uniform%20buffers/3.2.Descriptor%20pool%20and%20sets/)
 4. Texture mapping
     - 4.1 Images
     - 4.2 Image view and sampler
