@@ -41,9 +41,9 @@ struct SwapChainSupportDetails
 
 struct UniformBufferObject
 {
-	glm::mat4 model;
-	glm::mat4 view;
-	glm::mat4 proj;
+	alignas(16) glm::mat4 model;
+	alignas(16) glm::mat4 view;
+	alignas(16) glm::mat4 proj;
 };
 
 class VkApp
@@ -77,6 +77,8 @@ private:
 	void createVertexBuffer();
 	void createIndexBuffer();
 	void createUniformBuffers();
+	void createDescriptorPool();
+	void createDescriptorSets();
 	void createCommandBuffers();
 	void createSyncObjects();
 
@@ -144,6 +146,9 @@ private:
 	std::vector<VkBuffer> uniformBuffers;
 	std::vector<VkDeviceMemory> uniformBuffersMemory;
 	std::vector<void*> uniformBuffersMapped;
+
+	VkDescriptorPool descriptorPool;
+	std::vector<VkDescriptorSet> descriptorSets;
 
 	std::vector<VkCommandBuffer> commandBuffers;
 
