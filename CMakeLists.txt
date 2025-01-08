@@ -20,6 +20,8 @@ add_subdirectory(ThirdParty)
 
 set(DRAWING_A_TRIANGLE "1.Drawing a triangle")
 set(VERTEX_BUFFERS "2.Vertex buffers")
+set(UNIFORM_BUFFERS "3.Uniform buffers")
 
 add_subdirectory(${DRAWING_A_TRIANGLE})
 add_subdirectory(${VERTEX_BUFFERS})
+add_subdirectory(${UNIFORM_BUFFERS})
