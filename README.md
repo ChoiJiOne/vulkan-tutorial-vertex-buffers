@@ -26,10 +26,10 @@
         - [1.4.4 Frames in flight](./1.Drawing%20a%20triangle/1.4.Drawing/1.4.4.Frames%20in%20flight/)
     - [1.5 Swap chain receation](./1.Drawing%20a%20triangle/1.5.Swap%20chain%20recreation/)
 2. Vertex buffers
-    - 2.1 Vertex input description
-    - 2.2 Vertex buffer creation
-    - 2.3 Staging buffer
-    - 2.4 Index buffer
+    - [2.1 Vertex input description](./2.Vertex%20buffers/2.1.Vertex%20input%20description/)
+    - [2.2 Vertex buffer creation](./2.Vertex%20buffers/2.2.Vertex%20buffer%20creation/)
+    - [2.3 Staging buffer](./2.Vertex%20buffers/2.3.Staging%20buffer/)
+    - [2.4 Index buffer](./2.Vertex%20buffers/2.4.Index%20buffer/)
 3. Uniform buffers
     - 3.1 Descriptor layout and buffer
     - 3.2 Descriptor pool and sets
