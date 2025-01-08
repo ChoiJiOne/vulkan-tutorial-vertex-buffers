@@ -75,9 +75,16 @@ void VkApp::initWindow()
 
 	vertices =
 	{
-		{ { +0.0f, -0.5f }, { 1.0f, 0.0f, 0.0f } },
-		{ { +0.5f, +0.5f }, { 0.0f, 1.0f, 0.0f } },
-		{ { -0.5f, +0.5f }, { 0.0f, 0.0f, 1.0f } },
+		{ {-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+		{ {+0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+		{ {+0.5f, +0.5f}, {0.0f, 0.0f, 1.0f}},
+		{ {-0.5f, +0.5f}, {1.0f, 1.0f, 1.0f}},
+	};
+
+	indices =
+	{
+		0, 1, 2,
+		2, 3, 0,
 	};
 }
 
@@ -95,6 +102,7 @@ void VkApp::initVulkan()
 	createFramebuffers();
 	createCommandPool();
 	createVertexBuffer();
+	createIndexBuffer();
 	createCommandBuffers();
 	createSyncObjects();
 }
@@ -119,9 +127,12 @@ void VkApp::cleanup()
 
 	vkDestroyRenderPass(device, renderPass, nullptr);
 
+	vkDestroyBuffer(device, indexBuffer, nullptr);
+	vkFreeMemory(device, indexBufferMemory, nullptr);
+
 	vkDestroyBuffer(device, vertexBuffer, nullptr);
 	vkFreeMemory(device, vertexBufferMemory, nullptr);
-
+	
 	for (std::size_t index = 0; index < MAX_FRAMES_IN_FLIGHT; ++index)
 	{
 		vkDestroySemaphore(device, imageAvailableSemaphores[index], nullptr);
@@ -754,6 +765,41 @@ void VkApp::createVertexBuffer()
 	vkFreeMemory(device, stagingBufferMemory, nullptr);
 }
 
+void VkApp::createIndexBuffer()
+{
+	VkDeviceSize bufferSize = sizeof(uint16_t) * indices.size();
+
+	VkBuffer stagingBuffer;
+	VkDeviceMemory stagingBufferMemory;
+	createBuffer(
+		bufferSize, 
+		VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 
+		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 
+		stagingBuffer, 
+		stagingBufferMemory
+	);
+
+	void* data = nullptr;
+	vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
+	{
+		std::memcpy(data, indices.data(), static_cast<std::size_t>(bufferSize));
+	}
+	vkUnmapMemory(device, stagingBufferMemory);
+
+	createBuffer(
+		bufferSize,
+		VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		indexBuffer,
+		indexBufferMemory
+	);
+
+	copyBuffer(stagingBuffer, indexBuffer, bufferSize);
+
+	vkDestroyBuffer(device, stagingBuffer, nullptr);
+	vkFreeMemory(device, stagingBufferMemory, nullptr);
+}
+
 void VkApp::createCommandBuffers()
 {
 	commandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
@@ -1048,6 +1094,7 @@ void VkApp::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageInd
 		VkDeviceSize offsets[] = { 0, };
 
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
+		vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
 
 		VkViewport viewport{};
 		viewport.x = 0.0f;
@@ -1063,7 +1110,7 @@ void VkApp::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageInd
 		scissor.extent = swapChainExtent;
 		vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 
-		vkCmdDraw(commandBuffer, static_cast<uint32_t>(vertices.size()), 1, 0, 0);
+		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 	}
 	vkCmdEndRenderPass(commandBuffer);
 

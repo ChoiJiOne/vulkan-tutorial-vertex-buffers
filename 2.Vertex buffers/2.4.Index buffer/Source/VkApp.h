@@ -62,6 +62,7 @@ private:
 	void createFramebuffers();
 	void createCommandPool();
 	void createVertexBuffer();
+	void createIndexBuffer();
 	void createCommandBuffers();
 	void createSyncObjects();
 
@@ -121,6 +122,8 @@ private:
 
 	VkBuffer vertexBuffer;
 	VkDeviceMemory vertexBufferMemory;
+	VkBuffer indexBuffer;
+	VkDeviceMemory indexBufferMemory;
 
 	std::vector<VkCommandBuffer> commandBuffers;
 
@@ -132,4 +135,5 @@ private:
 	bool framebufferResized = false;
 
 	std::vector<Vertex> vertices;
+	std::vector<uint16_t> indices;
 };
