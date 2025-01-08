@@ -3,8 +3,13 @@
 #include <vulkan/vulkan.h>
 #include <glfw/glfw3.h>
 
+#define GLM_FORCE_RADIUS
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <algorithm> 
 #include <cstdlib>
+#include <chrono>
 #include <iostream>
 #include <limits> 
 #include <optional>
@@ -34,6 +39,13 @@ struct SwapChainSupportDetails
 	std::vector<VkPresentModeKHR> presentModes;
 };
 
+struct UniformBufferObject
+{
+	glm::mat4 model;
+	glm::mat4 view;
+	glm::mat4 proj;
+};
+
 class VkApp
 {
 public:
@@ -58,11 +70,13 @@ private:
 	void createSwapChain();
 	void createImageViews();
 	void createRenderPass();
+	void createDescriptorSetLayout();
 	void createGraphicsPipeline();
 	void createFramebuffers();
 	void createCommandPool();
 	void createVertexBuffer();
 	void createIndexBuffer();
+	void createUniformBuffers();
 	void createCommandBuffers();
 	void createSyncObjects();
 
@@ -82,6 +96,7 @@ private:
 	uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 	void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 	void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
+	void updateUniformBuffer(uint32_t currentImage);
 
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 		VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
@@ -115,6 +130,7 @@ private:
 	std::vector<VkFramebuffer> swapChainFramebuffers;
 
 	VkRenderPass renderPass;
+	VkDescriptorSetLayout descriptorSetLayout;
 	VkPipelineLayout pipelineLayout;
 	VkPipeline graphicsPipeline;
 
@@ -124,6 +140,10 @@ private:
 	VkDeviceMemory vertexBufferMemory;
 	VkBuffer indexBuffer;
 	VkDeviceMemory indexBufferMemory;
+
+	std::vector<VkBuffer> uniformBuffers;
+	std::vector<VkDeviceMemory> uniformBuffersMemory;
+	std::vector<void*> uniformBuffersMapped;
 
 	std::vector<VkCommandBuffer> commandBuffers;
 
